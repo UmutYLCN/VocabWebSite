@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useI18n } from '../app/I18nProvider'
 import { useAppStore } from '../store/useAppStore'
-import { Link } from 'react-router-dom'
+import BulkAddModal from '../components/BulkAddModal'
 
 export default function Decks() {
   const { t } = useI18n()
@@ -30,6 +30,7 @@ export default function Decks() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [eFront, setEFront] = useState('')
   const [eBack, setEBack] = useState('')
+  const [bulkOpen, setBulkOpen] = useState(false)
 
   const onCreateDeck = (e: FormEvent) => {
     e.preventDefault()
@@ -147,7 +148,7 @@ export default function Decks() {
               </form>
             )}
             <div className="mt-3 text-xs text-gray-400">
-              Need to add many at once? <Link className="underline" to="/settings#bulk-add">Use Bulk Add</Link>.
+              Need to add many at once? <button className="underline" onClick={() => setBulkOpen(true)}>Open Bulk Add</button>.
             </div>
           </div>
 
@@ -192,6 +193,15 @@ export default function Decks() {
           )}
         </div>
       </div>
+      <BulkAddModal
+        isOpen={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        decks={decks}
+        defaultDeckId={selectedId}
+        onImport={(deckId, pairs) => {
+          pairs.forEach(p => useAppStore.getState().addVocab(deckId, p.front, p.back))
+        }}
+      />
     </section>
   )
 }
