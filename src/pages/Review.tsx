@@ -49,11 +49,11 @@ export default function Review() {
   return (
     <section className="space-y-4">
       <h1>{t('page.review.title')}</h1>
-      <div className="text-sm text-gray-500 dark:text-gray-400">Remaining: {remaining}</div>
+      <div className="text-sm text-gray-400 chip">Remaining: {remaining}</div>
       <Flashcard front={current.front} back={current.back} showBack={showBack} />
       {!showBack ? (
         <button
-          className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 w-full sm:w-auto"
+          className="btn-primary w-full sm:w-auto"
           onClick={() => setShowBack(true)}
         >
           Show Answer

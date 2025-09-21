@@ -24,7 +24,7 @@ export default function AddVocab() {
       {decks.length === 0 ? (
         <p>Create a deck first in Decks page.</p>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-3 max-w-xl">
+        <form onSubmit={onSubmit} className="space-y-3 max-w-xl glass p-4">
           <div>
             <label className="block text-sm mb-1">Deck</label>
             <select className="w-full border rounded px-3 py-2" value={deckId} onChange={e => setDeckId(e.target.value)}>
@@ -41,7 +41,7 @@ export default function AddVocab() {
             <label className="block text-sm mb-1">Back</label>
             <input className="w-full border rounded px-3 py-2" value={back} onChange={e => setBack(e.target.value)} />
           </div>
-          <button className="px-4 py-2 rounded bg-blue-600 text-white">Add</button>
+          <button className="btn-primary">Add</button>
         </form>
       )}
     </section>

@@ -6,10 +6,31 @@
   color-scheme: light dark;
 }
 
-/* Basic typography defaults */
+/* App background: black base + red liquid glow */
 @layer base {
-  h1 { @apply text-2xl font-semibold; }
-  h2 { @apply text-xl font-semibold; }
-  a { @apply text-blue-600 dark:text-blue-400; }
+  html, body, #root { height: 100%; }
+  body { @apply bg-black text-gray-100; }
+  h1 { @apply text-3xl font-semibold tracking-tight; }
+  h2 { @apply text-2xl font-semibold; }
+  a { @apply text-red-400 hover:text-red-300; }
 }
+
+/* Glassmorphism helpers */
+@layer components {
+  .glass { @apply backdrop-blur-xxl bg-white/5 dark:bg-black/30 border border-white/10 rounded-2xl shadow-glass; }
+  .btn { @apply inline-flex items-center justify-center px-4 py-2 rounded-md transition-colors; }
+  .btn-primary { @apply btn bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400; }
+  .btn-ghost { @apply btn bg-white/5 dark:bg-white/5 text-gray-100 hover:bg-white/10; }
+  .chip { @apply inline-flex items-center px-2 py-1 rounded-full text-xs bg-white/10 border border-white/10; }
+}
+
+/* Background FX container attaches in App */
+.bgfx {
+  position: fixed; inset: 0; pointer-events: none; z-index: -1;
+}
+.bgfx::before, .bgfx::after {
+  content: ""; position: absolute; border-radius: 9999px; filter: blur(140px); mix-blend-mode: screen;
+}
+.bgfx::before { top: -15%; left: -10%; width: 42rem; height: 42rem; background: rgba(239, 35, 60, 0.28); }
+.bgfx::after  { bottom: -12%; right: -10%; width: 36rem; height: 36rem; background: rgba(239, 35, 60, 0.18); }
 

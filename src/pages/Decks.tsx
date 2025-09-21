@@ -22,7 +22,7 @@ export default function Decks() {
   return (
     <section className="space-y-6">
       <h1>{t('page.decks.title')}</h1>
-      <form onSubmit={onSubmit} className="space-y-3 max-w-xl">
+      <form onSubmit={onSubmit} className="space-y-3 max-w-xl glass p-4">
         <div>
           <label className="block text-sm mb-1">Name</label>
           <input className="w-full border rounded px-3 py-2" value={name} onChange={e => setName(e.target.value)} />
@@ -31,21 +31,21 @@ export default function Decks() {
           <label className="block text-sm mb-1">Description</label>
           <input className="w-full border rounded px-3 py-2" value={desc} onChange={e => setDesc(e.target.value)} />
         </div>
-        <button className="px-4 py-2 rounded bg-blue-600 text-white">{t('decks.create')}</button>
+        <button className="btn-primary">{t('decks.create')}</button>
       </form>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {decks.map(d => {
           const count = getVocabsByDeck(d.id).length
           return (
-            <div key={d.id} className="border rounded p-4">
+            <div key={d.id} className="glass p-4">
               <div className="font-semibold">{d.name}</div>
               {d.description && <div className="text-sm text-gray-500">{d.description}</div>}
               <div className="text-sm mt-2">Cards: {count}</div>
               <div className="mt-2">
-                <Link className="px-3 py-2 rounded bg-gray-200 mr-2 inline-block" to={`/decks/${d.id}`}>{t('nav.manage')}</Link>
+                <Link className="btn-ghost mr-2 inline-block" to={`/decks/${d.id}`}>{t('nav.manage')}</Link>
                 <button
-                  className="px-3 py-2 rounded bg-red-600 text-white"
+                  className="btn bg-red-700 hover:bg-red-600 text-white"
                   onClick={() => {
                     if (confirm(t('decks.delete.confirm'))) deleteDeck(d.id)
                   }}

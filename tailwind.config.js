@@ -6,8 +6,20 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        brand: {
+          red: '#ef233c',
+          dark: '#0a0a0a'
+        }
+      },
+      boxShadow: {
+        glass: '0 8px 32px 0 rgba(0,0,0,0.37)'
+      },
+      backdropBlur: {
+        xxl: '24px'
+      }
+    }
   },
   plugins: []
 }
-

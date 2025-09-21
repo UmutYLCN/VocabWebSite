@@ -7,12 +7,14 @@ import AddVocab from './pages/AddVocab'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
 import Navbar from './components/Navbar'
+import BackgroundFX from './components/BackgroundFX'
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <BackgroundFX />
       <Navbar />
-      <main className="container mx-auto px-4 py-6 flex-1">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/review" element={<Review />} />
