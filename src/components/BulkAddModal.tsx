@@ -27,6 +27,8 @@ export default function BulkAddModal({
   const [status, setStatus] = useState<string>('')
   const [jsonText, setJsonText] = useState('')
   const [showErrors, setShowErrors] = useState<boolean>(true)
+  const [jsonPreview, setJsonPreview] = useState<{ decks: number; vocabs: number; pairs: Pair[] }>({ decks: 0, vocabs: 0, pairs: [] })
+  const [jsonErrors, setJsonErrors] = useState<string[]>([])
 
   useEffect(() => {
     if (!isOpen) return
@@ -100,6 +102,34 @@ export default function BulkAddModal({
     setPreview(ok)
     setErrors(errs)
   }, [text, activeTab])
+
+  // Auto-parse JSON for Data tab
+  useEffect(() => {
+    if (!isOpen || activeTab !== 'data') return
+    const errs: string[] = []
+    let decksCount = 0
+    let vocabsCount = 0
+    let pairs: Pair[] = []
+    if (!jsonText.trim()) {
+      setJsonErrors([])
+      setJsonPreview({ decks: 0, vocabs: 0, pairs: [] })
+      return
+    }
+    try {
+      const obj = JSON.parse(jsonText)
+      const decks = obj?.decks && typeof obj.decks === 'object' ? obj.decks : {}
+      const vocabs = obj?.vocabs && typeof obj.vocabs === 'object' ? obj.vocabs : {}
+      decksCount = Object.keys(decks).length
+      const vocabValues = Object.values(vocabs as Record<string, any>)
+      vocabsCount = vocabValues.length
+      pairs = vocabValues.slice(0, 50).map((v: any) => ({ front: String(v.front ?? ''), back: String(v.back ?? '') }))
+      if (!obj || typeof obj !== 'object') errs.push('Root is not an object')
+    } catch (e: any) {
+      errs.push('Invalid JSON: ' + (e?.message || 'parse error'))
+    }
+    setJsonErrors(errs)
+    setJsonPreview({ decks: decksCount, vocabs: vocabsCount, pairs })
+  }, [jsonText, activeTab, isOpen])
 
   if (!isOpen) return null
 
@@ -178,16 +208,43 @@ export default function BulkAddModal({
                 <label className="block text-sm mb-1">Import JSON (paste)</label>
                 <textarea className="w-full min-h-[160px]" value={jsonText} onChange={e => setJsonText(e.target.value)} placeholder="Paste exported JSON here" />
               </div>
-              <div className="flex gap-2 flex-wrap items-center">
-                <button className="btn-primary" onClick={() => { const ok = importData(jsonText); setStatus(ok ? 'Import successful' : 'Import failed') }}>Import JSON</button>
+              <div className="flex items-center justify-between gap-3 flex-wrap text-sm">
+                <div className="chip">{jsonPreview.decks} decks • {jsonPreview.vocabs} cards • {jsonErrors.length} errors</div>
+                <label className="inline-flex items-center gap-2 text-xs opacity-80">
+                  <input type="checkbox" className="accent-red-500" checked={showErrors} onChange={e => setShowErrors(e.target.checked)} /> Show errors
+                </label>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="mb-1">Preview</div>
+                  <ul className="max-h-40 overflow-auto space-y-1">
+                    {jsonPreview.pairs.map((p, i) => (
+                      <li key={i} className="text-gray-300">{p.front} <span className="opacity-60">→</span> {p.back}</li>
+                    ))}
+                    {jsonPreview.pairs.length === 0 && <li className="opacity-60">No preview</li>}
+                  </ul>
+                </div>
+                {showErrors && (
+                  <div>
+                    <div className="mb-1">Errors</div>
+                    <ul className="max-h-40 overflow-auto space-y-1">
+                      {jsonErrors.map((e, i) => (
+                        <li key={i} className="text-red-300">{e}</li>
+                      ))}
+                      {jsonErrors.length === 0 && <li className="opacity-60">No errors</li>}
+                    </ul>
+                  </div>
+                )}
               </div>
               {status && <div className="text-sm text-gray-300">{status}</div>}
             </div>
           )}
         </div>
         <div className="sticky bottom-0 px-5 py-3 border-t border-white/10 bg-black/30 flex items-center justify-end gap-2">
-          {activeTab === 'cards' && (
+          {activeTab === 'cards' ? (
             <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
+          ) : (
+            <button className="btn-primary" onClick={() => { const ok = importData(jsonText); setStatus(ok ? 'Import successful' : 'Import failed') }} disabled={!jsonText.trim() || jsonErrors.length > 0}>Import JSON</button>
           )}
         </div>
       </div>
