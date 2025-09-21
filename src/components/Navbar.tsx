@@ -12,7 +12,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-20">
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 glass mt-3">
         <div className="flex items-center gap-6">
-          <span className="text-lg font-bold tracking-tight text-red-400">{t('app.title')}</span>
+          <a href="/" className="flex items-center gap-2">
+            <img src="/lexio-logo.png" alt="Lexio" className="h-7 w-7 object-contain" />
+            <span className="sr-only">{t('app.title')}</span>
+          </a>
           <ul className="hidden sm:flex items-center gap-2">
             <li>
               <NavLink to="/" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>

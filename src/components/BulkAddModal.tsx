@@ -208,7 +208,6 @@ export default function BulkAddModal({
           {activeTab === 'cards' && (
             <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
           )}
-          <button className="btn-ghost" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
