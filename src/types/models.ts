@@ -1,11 +1,12 @@
 // Models placeholders (fields are names only; types TBD)
 
 export interface Vocab {
-  id: string // TODO: UUID
-  front: string // TODO: term/question
-  back: string // TODO: definition/answer
+  id: string
+  front: string
+  back: string
   deckId: string
   createdAt: string // ISO date
+  review: ReviewState
 }
 
 export interface Deck {
@@ -19,4 +20,15 @@ export interface Gamification {
   xp: number
   streak: number
   level: number
+}
+
+export interface ReviewState {
+  /** Easiness factor, min 1.3 */
+  ef: number
+  /** Interval in days */
+  interval: number
+  /** Successful repetitions count */
+  reps: number
+  /** Next due time, ISO string */
+  dueAt: string
 }
