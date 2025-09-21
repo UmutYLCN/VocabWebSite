@@ -20,9 +20,8 @@ describe('App skeleton', () => {
     )
     expect(screen.getAllByText(/Home/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Review/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Decks/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Add/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Settings/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Manage|Yönet/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Settings|Ayarlar/i)[0]).toBeInTheDocument()
   })
 
   it('supports Turkish translations', () => {

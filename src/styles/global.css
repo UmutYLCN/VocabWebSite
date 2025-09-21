@@ -13,6 +13,7 @@
   h1 { @apply text-3xl font-semibold tracking-tight; }
   h2 { @apply text-2xl font-semibold; }
   a { @apply text-red-400 hover:text-red-300; }
+  input, select, textarea { @apply bg-white/90 dark:bg-white/10 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300 border border-white/20 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-500/50; }
 }
 
 /* Glassmorphism helpers */
@@ -33,4 +34,3 @@
 }
 .bgfx::before { top: -15%; left: -10%; width: 42rem; height: 42rem; background: rgba(239, 35, 60, 0.28); }
 .bgfx::after  { bottom: -12%; right: -10%; width: 36rem; height: 36rem; background: rgba(239, 35, 60, 0.18); }
-

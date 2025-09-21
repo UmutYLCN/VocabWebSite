@@ -26,12 +26,7 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink to="/decks" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-                {t('nav.decks')}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/add" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-                {t('nav.add')}
+                {t('nav.manage')}
               </NavLink>
             </li>
             <li>
@@ -66,12 +61,7 @@ export default function Navbar() {
           </li>
           <li>
             <NavLink to="/decks" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-              {t('nav.decks')}
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/add" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-              {t('nav.add')}
+              {t('nav.manage')}
             </NavLink>
           </li>
           <li>
