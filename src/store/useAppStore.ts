@@ -12,8 +12,11 @@ type AppState = {
 
 type AppActions = {
   addDeck: (name: string, description?: string) => Deck
+  updateDeck: (id: string, patch: Partial<Pick<Deck, 'name' | 'description'>>) => void
   addVocab: (deckId: string, front: string, back: string) => Vocab
+  updateVocab: (id: string, patch: Partial<Pick<Vocab, 'front' | 'back' | 'deckId'>>) => void
   deleteDeck: (deckId: string) => void
+  deleteVocab: (id: string) => void
   getDecks: () => Deck[]
   getDeck: (id: string) => Deck | undefined
   getVocabsByDeck: (deckId: string) => Vocab[]
@@ -52,12 +55,28 @@ export const useAppStore = create<AppState & AppActions>()(
         return vocab
       },
 
+      updateDeck: (id, patch) => {
+        set(s => ({ decks: { ...s.decks, [id]: { ...s.decks[id], ...patch } as Deck } }))
+      },
+
+      updateVocab: (id, patch) => {
+        set(s => ({ vocabs: { ...s.vocabs, [id]: { ...s.vocabs[id], ...patch } as Vocab } }))
+      },
+
       deleteDeck: (deckId: string) => {
         set(s => {
           const decks = { ...s.decks }
           delete decks[deckId]
           const vocabs = Object.fromEntries(Object.entries(s.vocabs).filter(([, v]) => v.deckId !== deckId))
           return { decks, vocabs }
+        })
+      },
+
+      deleteVocab: (id: string) => {
+        set(s => {
+          const v = { ...s.vocabs }
+          delete v[id]
+          return { vocabs: v }
         })
       },
 

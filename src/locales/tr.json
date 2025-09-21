@@ -11,6 +11,22 @@
   "page.add.title": "Kelime Ekle",
   "page.settings.title": "Ayarlar",
   "settings.language": "Dil",
-  "settings.selectLanguage": "Dil Seç"
+  "settings.selectLanguage": "Dil Seç",
+  "nav.manage": "Yönet",
+  "decks.create": "Deste Oluştur",
+  "decks.delete.confirm": "Deste ve kartları silinsin mi?",
+  "decks.manage.back": "Geri",
+  "decks.save": "Desteyi Kaydet",
+  "cards.none": "Henüz kart yok.",
+  "cards.edit": "Düzenle",
+  "cards.save": "Kaydet",
+  "cards.cancel": "İptal",
+  "cards.delete": "Sil",
+  "home.progress": "Seviye ilerlemesi",
+  "settings.data": "Veri",
+  "settings.export.copy": "Dışa aktar (kopyala)",
+  "settings.export.download": "JSON indir",
+  "settings.reset": "Tümünü Sıfırla",
+  "settings.import": "JSON içe aktar",
+  "settings.import.placeholder": "İçe aktarmak için JSON’u buraya yapıştırın"
 }
-

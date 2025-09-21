@@ -11,6 +11,22 @@
   "page.add.title": "Add Vocab",
   "page.settings.title": "Settings",
   "settings.language": "Language",
-  "settings.selectLanguage": "Select Language"
+  "settings.selectLanguage": "Select Language",
+  "nav.manage": "Manage",
+  "decks.create": "Create Deck",
+  "decks.delete.confirm": "Delete deck and its cards?",
+  "decks.manage.back": "Back",
+  "decks.save": "Save Deck",
+  "cards.none": "No cards yet.",
+  "cards.edit": "Edit",
+  "cards.save": "Save",
+  "cards.cancel": "Cancel",
+  "cards.delete": "Delete",
+  "home.progress": "Next level progress",
+  "settings.data": "Data",
+  "settings.export.copy": "Export (copy)",
+  "settings.export.download": "Download JSON",
+  "settings.reset": "Reset All",
+  "settings.import": "Import JSON",
+  "settings.import.placeholder": "Paste exported JSON here to import"
 }
-

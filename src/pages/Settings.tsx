@@ -38,6 +38,13 @@ export default function Settings() {
           >
             Export (copy)
           </button>
+          <a
+            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700"
+            href={URL.createObjectURL(new Blob([exportData()], { type: 'application/json' }))}
+            download={`vocab-backup-${Date.now()}.json`}
+          >
+            Download JSON
+          </a>
           <button
             className="px-4 py-2 rounded bg-red-600 text-white"
             onClick={() => {
@@ -65,6 +72,19 @@ export default function Settings() {
         >
           Import JSON
         </button>
+        <div>
+          <input
+            type="file"
+            accept="application/json"
+            onChange={async e => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              const text = await file.text()
+              const ok = importData(text)
+              setStatus(ok ? 'Import successful' : 'Import failed')
+            }}
+          />
+        </div>
         {status && <div className="text-sm text-gray-600 dark:text-gray-300">{status}</div>}
       </div>
     </section>

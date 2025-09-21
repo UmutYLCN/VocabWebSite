@@ -2,6 +2,7 @@ import { Routes, Route, NavLink } from 'react-router-dom'
 import Home from './pages/Home'
 import Review from './pages/Review'
 import Decks from './pages/Decks'
+import DeckDetail from './pages/DeckDetail'
 import AddVocab from './pages/AddVocab'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/review" element={<Review />} />
           <Route path="/decks" element={<Decks />} />
+          <Route path="/decks/:id" element={<DeckDetail />} />
           <Route path="/add" element={<AddVocab />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
