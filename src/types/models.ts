@@ -31,4 +31,6 @@ export interface ReviewState {
   reps: number
   /** Next due time, ISO string */
   dueAt: string
+  /** Last reviewed time, ISO string */
+  lastReviewedAt?: string
 }

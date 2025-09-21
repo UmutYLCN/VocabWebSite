@@ -4,10 +4,12 @@ import ReviewControls from '../components/ReviewControls'
 import { useI18n } from '../app/I18nProvider'
 import { useAppStore } from '../store/useAppStore'
 import { Vocab } from '../types/models'
+import { useSearchParams } from 'react-router-dom'
 
 export default function Review() {
   const { t } = useI18n()
-  const { getDueVocabs, reviewAnswer } = useAppStore()
+  const { getDueVocabs, reviewAnswer, getTodayBatch } = useAppStore()
+  const [params] = useSearchParams()
   const [queue, setQueue] = useState<Vocab[]>([])
   const [index, setIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
@@ -15,10 +17,17 @@ export default function Review() {
   const current = queue[index]
 
   useEffect(() => {
-    setQueue(getDueVocabs())
+    const limitParam = params.get('limit')
+    const deckParam = params.get('deck') || undefined
+    if (limitParam) {
+      const limit = parseInt(limitParam, 10)
+      setQueue(getTodayBatch(isNaN(limit) ? undefined : limit, deckParam || undefined))
+    } else {
+      setQueue(getDueVocabs())
+    }
     setIndex(0)
     setShowBack(false)
-  }, [getDueVocabs])
+  }, [getDueVocabs, getTodayBatch, params])
 
   const remaining = useMemo(() => (queue.length ? queue.length - index : 0), [queue.length, index])
 

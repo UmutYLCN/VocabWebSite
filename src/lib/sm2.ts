@@ -37,5 +37,6 @@ export function reviewWithSm2(prev: ReviewState, quality: 0|1|2|3|4|5, now: Date
   const due = new Date(now)
   due.setDate(due.getDate() + next.interval)
   next.dueAt = due.toISOString()
+  next.lastReviewedAt = now.toISOString()
   return next
 }

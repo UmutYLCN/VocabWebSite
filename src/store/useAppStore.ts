@@ -8,6 +8,11 @@ type AppState = {
   decks: Record<string, Deck>
   vocabs: Record<string, Vocab>
   stats: Gamification & { lastReviewDate?: string }
+  preferences: {
+    dailyGoal: number
+    scope: 'all' | 'deck'
+    deckId?: string
+  }
 }
 
 type AppActions = {
@@ -25,6 +30,9 @@ type AppActions = {
   exportData: () => string
   importData: (json: string) => boolean
   resetAll: () => void
+  setDailyGoal: (n: number) => void
+  setScope: (s: 'all' | 'deck', deckId?: string) => void
+  getTodayBatch: (limit?: number, deckId?: string) => Vocab[]
 }
 
 export const useAppStore = create<AppState & AppActions>()(
@@ -33,6 +41,7 @@ export const useAppStore = create<AppState & AppActions>()(
       decks: {},
       vocabs: {},
       stats: { xp: 0, streak: 0, level: 1 },
+      preferences: { dailyGoal: 10, scope: 'all' },
 
       addDeck: (name, description) => {
         const id = newId()
@@ -143,7 +152,26 @@ export const useAppStore = create<AppState & AppActions>()(
       },
 
       resetAll: () => {
-        set({ decks: {}, vocabs: {}, stats: { xp: 0, streak: 0, level: 1 } })
+        set({ decks: {}, vocabs: {}, stats: { xp: 0, streak: 0, level: 1 }, preferences: { dailyGoal: 10, scope: 'all' } })
+      },
+
+      setDailyGoal: (n: number) => set(s => ({ preferences: { ...s.preferences, dailyGoal: Math.max(1, Math.min(200, Math.floor(n))) } })),
+      setScope: (scope, deckId) => set(s => ({ preferences: { ...s.preferences, scope, deckId } })),
+
+      getTodayBatch: (limit, deckId) => {
+        const prefs = get().preferences
+        const lim = Math.max(1, Math.min(200, limit ?? prefs.dailyGoal))
+        const all = Object.values(get().vocabs)
+        const filtered = deckId ? all.filter(v => v.deckId === deckId) : all
+        const due = filtered
+          .filter(v => new Date(v.review.dueAt).getTime() <= Date.now())
+          .sort((a, b) => new Date(a.review.dueAt).getTime() - new Date(b.review.dueAt).getTime())
+        if (due.length >= lim) return due.slice(0, lim)
+        const need = lim - due.length
+        const fresh = filtered
+          .filter(v => (v.review.reps || 0) === 0)
+          .slice(0, need)
+        return [...due, ...fresh]
       }
     }),
     {
