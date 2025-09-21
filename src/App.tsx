@@ -4,6 +4,7 @@ import Review from './pages/Review'
 import Decks from './pages/Decks'
 import AddVocab from './pages/AddVocab'
 import Settings from './pages/Settings'
+import NotFound from './pages/NotFound'
 import Navbar from './components/Navbar'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/decks" element={<Decks />} />
           <Route path="/add" element={<AddVocab />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <footer className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
@@ -27,4 +29,3 @@ function App() {
 }
 
 export default App
-

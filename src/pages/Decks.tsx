@@ -4,7 +4,7 @@ import { useAppStore } from '../store/useAppStore'
 
 export default function Decks() {
   const { t } = useI18n()
-  const { getDecks, getVocabsByDeck, addDeck } = useAppStore()
+  const { getDecks, getVocabsByDeck, addDeck, deleteDeck } = useAppStore()
   const [name, setName] = useState('')
   const [desc, setDesc] = useState('')
 
@@ -41,6 +41,16 @@ export default function Decks() {
               <div className="font-semibold">{d.name}</div>
               {d.description && <div className="text-sm text-gray-500">{d.description}</div>}
               <div className="text-sm mt-2">Cards: {count}</div>
+              <div className="mt-2">
+                <button
+                  className="px-3 py-2 rounded bg-red-600 text-white"
+                  onClick={() => {
+                    if (confirm('Delete deck and its cards?')) deleteDeck(d.id)
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           )
         })}
