@@ -13,7 +13,7 @@ export default function Navbar() {
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 glass mt-3">
         <div className="flex items-center gap-6">
           <a href="/" className="flex items-center gap-2">
-            <img src="/lexio-logo.png" alt="Lexio" className="h-7 w-7 object-contain" />
+            <img src={theme === 'dark' ? '/lexio-logo-dark.svg' : '/lexio-logo.svg'} alt="Lexio" className="h-7 w-7 object-contain" />
             <span className="sr-only">{t('app.title')}</span>
           </a>
           <ul className="hidden sm:flex items-center gap-2">

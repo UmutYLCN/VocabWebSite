@@ -22,7 +22,7 @@ export default function BulkAddModal({
   const [text, setText] = useState('')
   const [preview, setPreview] = useState<Pair[]>([])
   const [errors, setErrors] = useState<{ line: number; reason: string; raw: string }[]>([])
-  const jsonFileRef = useRef<HTMLInputElement | null>(null)
+  // removed file upload for JSON; only paste flow kept
   const [activeTab, setActiveTab] = useState<'cards' | 'data'>('cards')
   const [status, setStatus] = useState<string>('')
   const [jsonText, setJsonText] = useState('')
@@ -34,7 +34,6 @@ export default function BulkAddModal({
     setText('')
     setPreview([])
     setErrors([])
-    jsonFileRef.current && (jsonFileRef.current.value = '')
     setJsonText('')
     setStatus('')
     setActiveTab('cards')
@@ -166,14 +165,14 @@ export default function BulkAddModal({
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
-              <div className="flex gap-2 flex-wrap">
-                <button className="btn-ghost" onClick={() => { const data = exportData(); navigator.clipboard?.writeText(data); setStatus('Copied JSON to clipboard') }}>Copy JSON</button>
-                <a
-                  className="btn-ghost"
-                  href={URL.createObjectURL(new Blob([exportData()], { type: 'application/json' }))}
-                  download={`vocab-backup-${Date.now()}.json`}
-                >Download JSON</a>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm mb-1">Target deck</label>
+                <select className="w-full" value={deckId} onChange={e => setDeckId(e.target.value)}>
+                  {decks.map(d => (
+                    <option key={d.id} value={d.id}>{d.name}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm mb-1">Import JSON (paste)</label>
@@ -181,8 +180,6 @@ export default function BulkAddModal({
               </div>
               <div className="flex gap-2 flex-wrap items-center">
                 <button className="btn-primary" onClick={() => { const ok = importData(jsonText); setStatus(ok ? 'Import successful' : 'Import failed') }}>Import JSON</button>
-                <div className="text-sm text-gray-300">or</div>
-                <input ref={jsonFileRef} type="file" accept="application/json" onChange={async e => { const f = e.target.files?.[0]; if (!f) return; const txt = await f.text(); const ok = importData(txt); setStatus(ok ? 'Import successful' : 'Import failed') }} />
               </div>
               {status && <div className="text-sm text-gray-300">{status}</div>}
             </div>
