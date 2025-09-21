@@ -125,12 +125,9 @@ export default function Decks() {
               <div className="mb-2 text-sm text-gray-300">Cards in {selectedDeck.name}</div>
               <div className="divide-y divide-white/10">
                 {cards.map(c => (
-                  <div key={c.id} className="py-2 flex items-center justify-between gap-2">
-                    <div>
-                      <div className="font-medium">{c.front}</div>
-                      <div className="text-sm text-gray-400">{c.back}</div>
-                    </div>
-                    <Link className="btn-ghost" to={`/decks/${selectedDeck.id}`}>{t('nav.manage')}</Link>
+                  <div key={c.id} className="py-2">
+                    <div className="font-medium">{c.front}</div>
+                    <div className="text-sm text-gray-400">{c.back}</div>
                   </div>
                 ))}
                 {cards.length === 0 && <div className="text-sm text-gray-400">No cards yet.</div>}
