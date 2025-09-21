@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useI18n } from '../app/I18nProvider'
 import { useAppStore } from '../store/useAppStore'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 export default function Decks() {
   const { t } = useI18n()
@@ -146,6 +146,9 @@ export default function Decks() {
                 <button className="btn-primary">Add</button>
               </form>
             )}
+            <div className="mt-3 text-xs text-gray-400">
+              Need to add many at once? <Link className="underline" to="/settings#bulk-add">Use Bulk Add</Link>.
+            </div>
           </div>
 
           {selectedDeck && (
