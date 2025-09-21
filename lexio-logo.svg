@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef233c"/>
+      <stop offset="1" stop-color="#ff4d6d"/>
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+  <rect x="20" y="20" rx="28" ry="28" width="216" height="216" fill="#0a0a0a"/>
+  <g filter="url(#blur)">
+    <ellipse cx="170" cy="70" rx="26" ry="26" fill="url(#g1)"/>
+  </g>
+  <g fill="#e9ecef">
+    <path d="M64 86c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16v4c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-4z"/>
+    <path d="M56 118c0-6.6 5.4-12 12-12h96c6.6 0 12 5.4 12 12v4c0 6.6-5.4 12-12 12H68c-6.6 0-12-5.4-12-12v-4z" opacity="0.9"/>
+    <path d="M48 150c0-6.6 5.4-12 12-12h112c6.6 0 12 5.4 12 12v4c0 6.6-5.4 12-12 12H60c-6.6 0-12-5.4-12-12v-4z" opacity="0.8"/>
+  </g>
+</svg>
+
