@@ -70,10 +70,14 @@ export default function Decks() {
               const count = getVocabsByDeck(d.id).length
               const active = d.id === selectedId
               return (
-                <button
+                <div
                   key={d.id}
-                  className={`text-left glass p-4 border ${active ? 'border-red-500' : 'border-white/10'}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={active}
+                  className={`text-left glass p-4 border cursor-pointer ${active ? 'border-red-500' : 'border-white/10'}`}
                   onClick={() => setSelectedId(d.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedId(d.id) } }}
                 >
                   <div className="font-semibold">{d.name}</div>
                   {d.description && <div className="text-sm text-gray-400">{d.description}</div>}
@@ -85,7 +89,7 @@ export default function Decks() {
                       onClick={(ev) => { ev.stopPropagation(); if (confirm(t('decks.delete.confirm'))) deleteDeck(d.id) }}
                     >{t('cards.delete')}</button>
                   </div>
-                </button>
+                </div>
               )
             })}
             {decks.length === 0 && <p>No decks yet.</p>}
