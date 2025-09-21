@@ -20,7 +20,7 @@ describe('App skeleton', () => {
     )
     expect(screen.getAllByText(/Home/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Review/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Manage|Yönet/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Cards/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Settings|Ayarlar/i)[0]).toBeInTheDocument()
   })
 

@@ -50,11 +50,17 @@ export default function Decks() {
             <div className="text-sm text-gray-300">{t('decks.create')}</div>
             <div>
               <label className="block text-sm mb-1">Name</label>
-              <input className="w-full border rounded px-3 py-2" value={name} onChange={e => setName(e.target.value)} />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60">🗂️</span>
+                <input className={`w-full pl-9 ${!name.trim() ? 'border-red-500/60 focus:ring-red-500/50' : 'border-white/20 focus:ring-red-500/40'}`} value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Spanish Basics" />
+              </div>
             </div>
             <div>
               <label className="block text-sm mb-1">Description</label>
-              <input className="w-full border rounded px-3 py-2" value={desc} onChange={e => setDesc(e.target.value)} />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60">📝</span>
+                <input className="w-full pl-9" value={desc} onChange={e => setDesc(e.target.value)} placeholder="optional" />
+              </div>
             </div>
             <button className="btn-primary">{t('decks.create')}</button>
           </form>
@@ -97,11 +103,17 @@ export default function Decks() {
                 <div className="text-sm">Deck: <span className="text-red-300">{selectedDeck.name}</span></div>
                 <div>
                   <label className="block text-sm mb-1">Front</label>
-                  <input className="w-full border rounded px-3 py-2" value={front} onChange={e => setFront(e.target.value)} />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60">🔤</span>
+                    <input className={`w-full pl-9 ${!front.trim() ? 'border-red-500/60 focus:ring-red-500/50' : 'border-green-500/60 focus:ring-green-500/40'}`} value={front} onChange={e => setFront(e.target.value)} placeholder="question / term" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm mb-1">Back</label>
-                  <input className="w-full border rounded px-3 py-2" value={back} onChange={e => setBack(e.target.value)} />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60">💬</span>
+                    <input className={`w-full pl-9 ${!back.trim() ? 'border-red-500/60 focus:ring-red-500/50' : 'border-green-500/60 focus:ring-green-500/40'}`} value={back} onChange={e => setBack(e.target.value)} placeholder="answer / definition" />
+                  </div>
                 </div>
                 <button className="btn-primary">Add</button>
               </form>
