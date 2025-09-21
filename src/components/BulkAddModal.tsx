@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useAppStore } from '../store/useAppStore'
 
 type DeckMeta = { id: string; name: string }
 type Pair = { front: string; back: string }
@@ -16,11 +17,16 @@ export default function BulkAddModal({
   defaultDeckId?: string
   onImport: (deckId: string, pairs: Pair[]) => void
 }) {
+  const { exportData, importData } = useAppStore()
   const [deckId, setDeckId] = useState<string>('')
   const [text, setText] = useState('')
   const [preview, setPreview] = useState<Pair[]>([])
   const [errors, setErrors] = useState<{ line: number; reason: string; raw: string }[]>([])
   const fileRef = useRef<HTMLInputElement | null>(null)
+  const jsonFileRef = useRef<HTMLInputElement | null>(null)
+  const [activeTab, setActiveTab] = useState<'cards' | 'data'>('cards')
+  const [status, setStatus] = useState<string>('')
+  const [jsonText, setJsonText] = useState('')
 
   useEffect(() => {
     if (isOpen) {
@@ -29,6 +35,10 @@ export default function BulkAddModal({
       setPreview([])
       setErrors([])
       fileRef.current && (fileRef.current.value = '')
+      jsonFileRef.current && (jsonFileRef.current.value = '')
+      setJsonText('')
+      setStatus('')
+      setActiveTab('cards')
     }
   }, [isOpen, defaultDeckId, decks])
 
@@ -111,54 +121,86 @@ export default function BulkAddModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative glass w-full max-w-2xl p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Bulk Add Cards</h3>
+      <div className="relative glass w-full max-w-3xl p-0">
+        <div className="sticky top-0 flex items-center justify-between px-5 py-3 border-b border-white/10 bg-black/30">
+          <h3 className="text-lg font-semibold">Bulk Tools</h3>
           <button className="btn-ghost" onClick={onClose}>Close</button>
         </div>
-        <div className="grid sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-sm mb-1">Target deck</label>
-            <select className="w-full" value={deckId} onChange={e => setDeckId(e.target.value)}>
-              {decks.map(d => (
-                <option key={d.id} value={d.id}>{d.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm mb-1">CSV upload</label>
-            <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }} />
+        <div className="px-5 pt-3">
+          <div className="flex gap-2 mb-3">
+            <button className={`btn-ghost ${activeTab === 'cards' ? 'border border-red-500/50' : ''}`} onClick={() => setActiveTab('cards')}>Add Cards</button>
+            <button className={`btn-ghost ${activeTab === 'data' ? 'border border-red-500/50' : ''}`} onClick={() => setActiveTab('data')}>Data JSON</button>
           </div>
         </div>
-        <div>
-          <label className="block text-sm mb-1">Or paste lines (front | back, comma or tab)</label>
-          <textarea className="w-full min-h-[160px]" value={text} onChange={e => setText(e.target.value)} placeholder={`hello, merhaba\n"good morning", "gunaydin"`} />
-        </div>
-        <div className="flex gap-2">
-          <button className="btn-ghost" onClick={onParseClick}>Preview</button>
-          <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-3 text-sm">
-          <div>
-            <div className="mb-1">Preview ({preview.length})</div>
-            <ul className="max-h-40 overflow-auto space-y-1">
-              {preview.slice(0, 50).map((p, i) => (
-                <li key={i} className="text-gray-300">{p.front} <span className="opacity-60">→</span> {p.back}</li>
-              ))}
-              {preview.length > 50 && <li className="opacity-60">…</li>}
-            </ul>
-          </div>
-          <div>
-            <div className="mb-1">Errors ({errors.length})</div>
-            <ul className="max-h-40 overflow-auto space-y-1">
-              {errors.map((e, i) => (
-                <li key={i} className="text-red-300">Line {e.line}: {e.reason} — <span className="opacity-70">{e.raw}</span></li>
-              ))}
-            </ul>
-          </div>
+        <div className="px-5 pb-5 max-h-[80vh] overflow-auto">
+          {activeTab === 'cards' ? (
+            <div className="space-y-4">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm mb-1">Target deck</label>
+                  <select className="w-full" value={deckId} onChange={e => setDeckId(e.target.value)}>
+                    {decks.map(d => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">CSV upload</label>
+                  <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Or paste lines (front | back, comma or tab)</label>
+                <textarea className="w-full min-h-[160px]" value={text} onChange={e => setText(e.target.value)} placeholder={`hello, merhaba\n"good morning", "gunaydin"`} />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <button className="btn-ghost" onClick={onParseClick}>Preview</button>
+                <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="mb-1">Preview ({preview.length})</div>
+                  <ul className="max-h-40 overflow-auto space-y-1">
+                    {preview.slice(0, 50).map((p, i) => (
+                      <li key={i} className="text-gray-300">{p.front} <span className="opacity-60">→</span> {p.back}</li>
+                    ))}
+                    {preview.length > 50 && <li className="opacity-60">…</li>}
+                  </ul>
+                </div>
+                <div>
+                  <div className="mb-1">Errors ({errors.length})</div>
+                  <ul className="max-h-40 overflow-auto space-y-1">
+                    {errors.map((e, i) => (
+                      <li key={i} className="text-red-300">Line {e.line}: {e.reason} — <span className="opacity-70">{e.raw}</span></li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex gap-2 flex-wrap">
+                <button className="btn-ghost" onClick={() => { const data = exportData(); navigator.clipboard?.writeText(data); setStatus('Copied JSON to clipboard') }}>Copy JSON</button>
+                <a
+                  className="btn-ghost"
+                  href={URL.createObjectURL(new Blob([exportData()], { type: 'application/json' }))}
+                  download={`vocab-backup-${Date.now()}.json`}
+                >Download JSON</a>
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Import JSON (paste)</label>
+                <textarea className="w-full min-h-[160px]" value={jsonText} onChange={e => setJsonText(e.target.value)} placeholder="Paste exported JSON here" />
+              </div>
+              <div className="flex gap-2 flex-wrap items-center">
+                <button className="btn-primary" onClick={() => { const ok = importData(jsonText); setStatus(ok ? 'Import successful' : 'Import failed') }}>Import JSON</button>
+                <div className="text-sm text-gray-300">or</div>
+                <input ref={jsonFileRef} type="file" accept="application/json" onChange={async e => { const f = e.target.files?.[0]; if (!f) return; const txt = await f.text(); const ok = importData(txt); setStatus(ok ? 'Import successful' : 'Import failed') }} />
+              </div>
+              {status && <div className="text-sm text-gray-300">{status}</div>}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
-
