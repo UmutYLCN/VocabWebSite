@@ -1,0 +1,16 @@
+{
+  "app.title": "Vocab",
+  "nav.home": "Ana Sayfa",
+  "nav.review": "Tekrar",
+  "nav.decks": "Deste",
+  "nav.add": "Ekle",
+  "nav.settings": "Ayarlar",
+  "page.home.title": "Ana Sayfa",
+  "page.review.title": "Tekrar",
+  "page.decks.title": "Desteler",
+  "page.add.title": "Kelime Ekle",
+  "page.settings.title": "Ayarlar",
+  "settings.language": "Dil",
+  "settings.selectLanguage": "Dil Seç"
+}
+

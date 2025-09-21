@@ -1,0 +1,16 @@
+{
+  "app.title": "Vocab",
+  "nav.home": "Home",
+  "nav.review": "Review",
+  "nav.decks": "Decks",
+  "nav.add": "Add",
+  "nav.settings": "Settings",
+  "page.home.title": "Home",
+  "page.review.title": "Review",
+  "page.decks.title": "Decks",
+  "page.add.title": "Add Vocab",
+  "page.settings.title": "Settings",
+  "settings.language": "Language",
+  "settings.selectLanguage": "Select Language"
+}
+

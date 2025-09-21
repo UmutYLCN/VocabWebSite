@@ -24,4 +24,21 @@ describe('App skeleton', () => {
     expect(screen.getAllByText(/Add/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Settings/i)[0]).toBeInTheDocument()
   })
+
+  it('supports Turkish translations', () => {
+    localStorage.setItem('locale', 'tr')
+    render(
+      <ThemeProvider>
+        <StoreProvider>
+          <I18nProvider>
+            <MemoryRouter>
+              <App />
+            </MemoryRouter>
+          </I18nProvider>
+        </StoreProvider>
+      </ThemeProvider>
+    )
+    expect(screen.getAllByText(/Ana Sayfa/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Ayarlar/i)[0]).toBeInTheDocument()
+  })
 })
