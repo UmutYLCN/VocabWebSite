@@ -22,7 +22,6 @@ export default function BulkAddModal({
   const [text, setText] = useState('')
   const [preview, setPreview] = useState<Pair[]>([])
   const [errors, setErrors] = useState<{ line: number; reason: string; raw: string }[]>([])
-  const fileRef = useRef<HTMLInputElement | null>(null)
   const jsonFileRef = useRef<HTMLInputElement | null>(null)
   const [activeTab, setActiveTab] = useState<'cards' | 'data'>('cards')
   const [status, setStatus] = useState<string>('')
@@ -35,7 +34,6 @@ export default function BulkAddModal({
     setText('')
     setPreview([])
     setErrors([])
-    fileRef.current && (fileRef.current.value = '')
     jsonFileRef.current && (jsonFileRef.current.value = '')
     setJsonText('')
     setStatus('')
@@ -96,14 +94,6 @@ export default function BulkAddModal({
     return { ok, errs }
   }
 
-  const onFile = async (f: File) => {
-    const txt = await f.text()
-    setText(txt)
-    const { ok, errs } = detectAndSplit(txt)
-    setPreview(ok)
-    setErrors(errs)
-  }
-
   // Auto-parse on text changes for streamlined UX
   useEffect(() => {
     if (!isOpen || activeTab !== 'cards') return
@@ -135,19 +125,13 @@ export default function BulkAddModal({
         <div className="px-5 pb-3 max-h-[80vh] overflow-auto">
           {activeTab === 'cards' ? (
             <div className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm mb-1">Target deck</label>
-                  <select className="w-full" value={deckId} onChange={e => setDeckId(e.target.value)}>
-                    {decks.map(d => (
-                      <option key={d.id} value={d.id}>{d.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm mb-1">CSV upload</label>
-                  <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }} />
-                </div>
+              <div>
+                <label className="block text-sm mb-1">Target deck</label>
+                <select className="w-full" value={deckId} onChange={e => setDeckId(e.target.value)}>
+                  {decks.map(d => (
+                    <option key={d.id} value={d.id}>{d.name}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm mb-1">Paste lines (front | back, comma or tab)</label>
