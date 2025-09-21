@@ -179,6 +179,7 @@ export default function BulkAddModal({
                     {preview.slice(0, 50).map((p, i) => (
                       <li key={i} className="text-gray-300">{p.front} <span className="opacity-60">→</span> {p.back}</li>
                     ))}
+                    {preview.length === 0 && <li className="opacity-60">No preview</li>}
                     {preview.length > 50 && <li className="opacity-60">…</li>}
                   </ul>
                 </div>
@@ -189,6 +190,7 @@ export default function BulkAddModal({
                       {errors.map((e, i) => (
                         <li key={i} className="text-red-300">Line {e.line}: {e.reason} — <span className="opacity-70">{e.raw}</span></li>
                       ))}
+                      {errors.length === 0 && <li className="opacity-60">No errors</li>}
                     </ul>
                   </div>
                 )}
