@@ -27,6 +27,7 @@ export default function BulkAddModal({
   const [activeTab, setActiveTab] = useState<'cards' | 'data'>('cards')
   const [status, setStatus] = useState<string>('')
   const [jsonText, setJsonText] = useState('')
+  const [showErrors, setShowErrors] = useState<boolean>(true)
 
   useEffect(() => {
     if (isOpen) {
@@ -106,11 +107,13 @@ export default function BulkAddModal({
     setErrors(errs)
   }
 
-  const onParseClick = () => {
+  // Auto-parse on text changes for streamlined UX
+  useEffect(() => {
+    if (activeTab !== 'cards') return
     const { ok, errs } = detectAndSplit(text)
     setPreview(ok)
     setErrors(errs)
-  }
+  }, [text, activeTab])
 
   const doImport = () => {
     if (!deckId || preview.length === 0) return
@@ -123,16 +126,14 @@ export default function BulkAddModal({
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="relative glass w-full max-w-3xl p-0">
         <div className="sticky top-0 flex items-center justify-between px-5 py-3 border-b border-white/10 bg-black/30">
-          <h3 className="text-lg font-semibold">Bulk Tools</h3>
+          <h3 className="text-lg font-semibold">Bulk</h3>
+          <div className="inline-flex rounded-md overflow-hidden border border-white/10">
+            <button className={`px-3 py-1 text-sm ${activeTab==='cards' ? 'bg-red-600/60' : 'bg-white/5'}`} onClick={() => setActiveTab('cards')}>Cards</button>
+            <button className={`px-3 py-1 text-sm ${activeTab==='data' ? 'bg-red-600/60' : 'bg-white/5'}`} onClick={() => setActiveTab('data')}>Data</button>
+          </div>
           <button className="btn-ghost" onClick={onClose}>Close</button>
         </div>
-        <div className="px-5 pt-3">
-          <div className="flex gap-2 mb-3">
-            <button className={`btn-ghost ${activeTab === 'cards' ? 'border border-red-500/50' : ''}`} onClick={() => setActiveTab('cards')}>Add Cards</button>
-            <button className={`btn-ghost ${activeTab === 'data' ? 'border border-red-500/50' : ''}`} onClick={() => setActiveTab('data')}>Data JSON</button>
-          </div>
-        </div>
-        <div className="px-5 pb-5 max-h-[80vh] overflow-auto">
+        <div className="px-5 pb-3 max-h-[80vh] overflow-auto">
           {activeTab === 'cards' ? (
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-3">
@@ -150,16 +151,18 @@ export default function BulkAddModal({
                 </div>
               </div>
               <div>
-                <label className="block text-sm mb-1">Or paste lines (front | back, comma or tab)</label>
+                <label className="block text-sm mb-1">Paste lines (front | back, comma or tab)</label>
                 <textarea className="w-full min-h-[160px]" value={text} onChange={e => setText(e.target.value)} placeholder={`hello, merhaba\n"good morning", "gunaydin"`} />
               </div>
-              <div className="flex gap-2 flex-wrap">
-                <button className="btn-ghost" onClick={onParseClick}>Preview</button>
-                <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
+              <div className="flex items-center justify-between gap-3 flex-wrap text-sm">
+                <div className="chip">{preview.length} parsed • {errors.length} errors</div>
+                <label className="inline-flex items-center gap-2 text-xs opacity-80">
+                  <input type="checkbox" className="accent-red-500" checked={showErrors} onChange={e => setShowErrors(e.target.checked)} /> Show errors
+                </label>
               </div>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                 <div>
-                  <div className="mb-1">Preview ({preview.length})</div>
+                  <div className="mb-1">Preview</div>
                   <ul className="max-h-40 overflow-auto space-y-1">
                     {preview.slice(0, 50).map((p, i) => (
                       <li key={i} className="text-gray-300">{p.front} <span className="opacity-60">→</span> {p.back}</li>
@@ -167,14 +170,16 @@ export default function BulkAddModal({
                     {preview.length > 50 && <li className="opacity-60">…</li>}
                   </ul>
                 </div>
-                <div>
-                  <div className="mb-1">Errors ({errors.length})</div>
-                  <ul className="max-h-40 overflow-auto space-y-1">
-                    {errors.map((e, i) => (
-                      <li key={i} className="text-red-300">Line {e.line}: {e.reason} — <span className="opacity-70">{e.raw}</span></li>
-                    ))}
-                  </ul>
-                </div>
+                {showErrors && (
+                  <div>
+                    <div className="mb-1">Errors</div>
+                    <ul className="max-h-40 overflow-auto space-y-1">
+                      {errors.map((e, i) => (
+                        <li key={i} className="text-red-300">Line {e.line}: {e.reason} — <span className="opacity-70">{e.raw}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -199,6 +204,12 @@ export default function BulkAddModal({
               {status && <div className="text-sm text-gray-300">{status}</div>}
             </div>
           )}
+        </div>
+        <div className="sticky bottom-0 px-5 py-3 border-t border-white/10 bg-black/30 flex items-center justify-end gap-2">
+          {activeTab === 'cards' && (
+            <button className="btn-primary" onClick={doImport} disabled={!deckId || preview.length === 0}>Import {preview.length > 0 ? `(${preview.length})` : ''}</button>
+          )}
+          <button className="btn-ghost" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
