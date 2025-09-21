@@ -7,7 +7,9 @@ import { Vocab } from '../types/models'
 
 export default function Review() {
   const { t } = useI18n()
-  const { getDueVocabs, reviewAnswer } = useAppStore()
+  const { getDueVocabs, reviewAnswer, getDecks } = useAppStore()
+  const decks = getDecks()
+  const [filterDeck, setFilterDeck] = useState<string | 'all' | ''>('all')
   const [queue, setQueue] = useState<Vocab[]>([])
   const [index, setIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
@@ -15,10 +17,11 @@ export default function Review() {
   const current = queue[index]
 
   useEffect(() => {
-    setQueue(getDueVocabs())
+    const deckId = filterDeck === 'all' ? undefined : filterDeck
+    setQueue(getDueVocabs(undefined, deckId))
     setIndex(0)
     setShowBack(false)
-  }, [getDueVocabs])
+  }, [getDueVocabs, filterDeck])
 
   const remaining = useMemo(() => (queue.length ? queue.length - index : 0), [queue.length, index])
 
@@ -49,7 +52,18 @@ export default function Review() {
   return (
     <section className="space-y-4">
       <h1>{t('page.review.title')}</h1>
-      <div className="text-sm text-gray-400 chip">Remaining: {remaining}</div>
+      <div className="glass p-3 flex flex-wrap gap-3 items-center">
+        <label className="text-sm">Scope</label>
+        <select className="min-w-[160px]" value={filterDeck} onChange={e => setFilterDeck(e.target.value as any)}>
+          <option value="all">All decks</option>
+          <option value="">No deck (All)</option>
+          {decks.map(d => (
+            <option key={d.id} value={d.id}>{d.name}</option>
+          ))}
+        </select>
+        <div className="text-xs chip">Remaining: {remaining}</div>
+      </div>
+      
       <Flashcard front={current.front} back={current.back} showBack={showBack} />
       {!showBack ? (
         <button

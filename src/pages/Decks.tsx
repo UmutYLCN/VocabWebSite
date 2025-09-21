@@ -20,13 +20,14 @@ export default function Decks() {
   }, [selectedId])
 
   const selectedDeck = useMemo(() => decks.find(d => d.id === selectedId), [decks, selectedId])
-  const cards = selectedId ? getVocabsByDeck(selectedId) : []
+  const cards = selectedId ? getVocabsByDeck(selectedId) : getVocabsByDeck('')
 
   // forms
   const [name, setName] = useState('')
   const [desc, setDesc] = useState('')
   const [front, setFront] = useState('')
   const [back, setBack] = useState('')
+  const [targetDeckId, setTargetDeckId] = useState<string>('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [eFront, setEFront] = useState('')
   const [eBack, setEBack] = useState('')
@@ -42,7 +43,8 @@ export default function Decks() {
   const onAddCard = (e: FormEvent) => {
     e.preventDefault()
     if (!selectedId || !front.trim() || !back.trim()) return
-    addVocab(selectedId, front.trim(), back.trim())
+    const toDeck = targetDeckId || selectedId || null
+    addVocab(toDeck, front.trim(), back.trim())
     setFront(''); setBack('')
   }
 
@@ -126,10 +128,18 @@ export default function Decks() {
           <div className="glass p-4">
             <div className="mb-2 text-sm text-gray-300">Add card</div>
             {!selectedDeck ? (
-              <p className="text-sm text-gray-400">Create or select a deck to add cards.</p>
+              <p className="text-sm text-gray-400">Optionally pick a deck or add without deck.</p>
             ) : (
               <form onSubmit={onAddCard} className="space-y-3">
-                <div className="text-sm">Deck: <span className="text-red-300">{selectedDeck.name}</span></div>
+                <div>
+                  <label className="block text-sm mb-1">Target deck</label>
+                  <select className="w-full" value={targetDeckId} onChange={e => setTargetDeckId(e.target.value)}>
+                    <option value="">No deck (All)</option>
+                    {decks.map(d => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm mb-1">Front</label>
                   <div className="relative">

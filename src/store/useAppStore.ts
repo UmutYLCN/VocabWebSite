@@ -13,14 +13,14 @@ type AppState = {
 type AppActions = {
   addDeck: (name: string, description?: string) => Deck
   updateDeck: (id: string, patch: Partial<Pick<Deck, 'name' | 'description'>>) => void
-  addVocab: (deckId: string, front: string, back: string) => Vocab
+  addVocab: (deckId: string | null, front: string, back: string) => Vocab
   updateVocab: (id: string, patch: Partial<Pick<Vocab, 'front' | 'back' | 'deckId'>>) => void
   deleteDeck: (deckId: string) => void
   deleteVocab: (id: string) => void
   getDecks: () => Deck[]
   getDeck: (id: string) => Deck | undefined
-  getVocabsByDeck: (deckId: string) => Vocab[]
-  getDueVocabs: (now?: Date) => Vocab[]
+  getVocabsByDeck: (deckId: string | null | '') => Vocab[]
+  getDueVocabs: (now?: Date, deckId?: string | null | '') => Vocab[]
   reviewAnswer: (vocabId: string, quality: 0|1|2|3|4|5, now?: Date) => void
   exportData: () => string
   importData: (json: string) => boolean
@@ -45,7 +45,7 @@ export const useAppStore = create<AppState & AppActions>()(
         const id = newId()
         const vocab: Vocab = {
           id,
-          deckId,
+          deckId: deckId ?? null,
           front,
           back,
           createdAt: new Date().toISOString(),
@@ -82,10 +82,13 @@ export const useAppStore = create<AppState & AppActions>()(
 
       getDecks: () => Object.values(get().decks).sort((a, b) => a.name.localeCompare(b.name)),
       getDeck: id => get().decks[id],
-      getVocabsByDeck: deckId => Object.values(get().vocabs).filter(v => v.deckId === deckId),
+      getVocabsByDeck: deckId => Object.values(get().vocabs).filter(v => (deckId ? v.deckId === deckId : !v.deckId)),
 
-      getDueVocabs: (now = new Date()) => {
-        const vocabs = Object.values(get().vocabs)
+      getDueVocabs: (now = new Date(), deckId) => {
+        let vocabs = Object.values(get().vocabs)
+        if (deckId !== undefined) {
+          vocabs = deckId ? vocabs.filter(v => v.deckId === deckId) : vocabs.filter(v => !v.deckId)
+        }
         return vocabs
           .filter(v => new Date(v.review.dueAt).getTime() <= now.getTime())
           .sort((a, b) => new Date(a.review.dueAt).getTime() - new Date(b.review.dueAt).getTime())
