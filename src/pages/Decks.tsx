@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useI18n } from '../app/I18nProvider'
 import { useAppStore } from '../store/useAppStore'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
 export default function Decks() {
   const { t } = useI18n()
@@ -9,11 +9,15 @@ export default function Decks() {
   const decks = getDecks()
 
   // unified page state
-  const [selectedId, setSelectedId] = useState<string>('')
+  const SELECTED_KEY = 'ui.selectedDeck'
+  const [selectedId, setSelectedId] = useState<string>(() => localStorage.getItem(SELECTED_KEY) || '')
   useEffect(() => {
     if (!selectedId && decks.length > 0) setSelectedId(decks[0].id)
     if (decks.length === 0) setSelectedId('')
   }, [decks.length])
+  useEffect(() => {
+    if (selectedId) localStorage.setItem(SELECTED_KEY, selectedId)
+  }, [selectedId])
 
   const selectedDeck = useMemo(() => decks.find(d => d.id === selectedId), [decks, selectedId])
   const cards = selectedId ? getVocabsByDeck(selectedId) : []
@@ -23,6 +27,9 @@ export default function Decks() {
   const [desc, setDesc] = useState('')
   const [front, setFront] = useState('')
   const [back, setBack] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [eFront, setEFront] = useState('')
+  const [eBack, setEBack] = useState('')
 
   const onCreateDeck = (e: FormEvent) => {
     e.preventDefault()
@@ -37,6 +44,25 @@ export default function Decks() {
     if (!selectedId || !front.trim() || !back.trim()) return
     addVocab(selectedId, front.trim(), back.trim())
     setFront(''); setBack('')
+  }
+
+  const startEditCard = (id: string, f: string, b: string) => {
+    setEditingId(id)
+    setEFront(f)
+    setEBack(b)
+  }
+
+  const saveEditCard = (e: FormEvent) => {
+    e.preventDefault()
+    if (!editingId) return
+    if (!eFront.trim() || !eBack.trim()) return
+    useAppStore.getState().updateVocab(editingId, { front: eFront.trim(), back: eBack.trim() })
+    setEditingId(null)
+  }
+
+  const deleteCard = (id: string) => {
+    useAppStore.getState().deleteVocab(id)
+    if (editingId === id) setEditingId(null)
   }
 
   return (
@@ -83,7 +109,6 @@ export default function Decks() {
                   {d.description && <div className="text-sm text-gray-400">{d.description}</div>}
                   <div className="text-xs mt-2 chip">Cards: {count}</div>
                   <div className="mt-3 flex gap-2">
-                    <Link className="btn-ghost" to={`/decks/${d.id}`}>{t('nav.manage')}</Link>
                     <button
                       className="btn bg-red-700 hover:bg-red-600 text-white"
                       onClick={(ev) => { ev.stopPropagation(); if (confirm(t('decks.delete.confirm'))) deleteDeck(d.id) }}
@@ -126,12 +151,37 @@ export default function Decks() {
 
           {selectedDeck && (
             <div className="glass p-4">
-              <div className="mb-2 text-sm text-gray-300">Cards in {selectedDeck.name}</div>
+              <div className="mb-3 flex items-center justify-between">
+                <div className="text-sm text-gray-300">Cards in <span className="text-red-300">{selectedDeck.name}</span></div>
+                <div className="chip">{cards.length} cards</div>
+              </div>
               <div className="divide-y divide-white/10">
                 {cards.map(c => (
-                  <div key={c.id} className="py-2">
-                    <div className="font-medium">{c.front}</div>
-                    <div className="text-sm text-gray-400">{c.back}</div>
+                  <div key={c.id} className="py-3 flex items-center gap-3 justify-between">
+                    {editingId === c.id ? (
+                      <form onSubmit={saveEditCard} className="flex-1 grid gap-2 md:grid-cols-2">
+                        <input value={eFront} onChange={e => setEFront(e.target.value)} placeholder="Front" />
+                        <input value={eBack} onChange={e => setEBack(e.target.value)} placeholder="Back" />
+                      </form>
+                    ) : (
+                      <div className="flex-1">
+                        <div className="font-medium">{c.front}</div>
+                        <div className="text-sm text-gray-400">{c.back}</div>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      {editingId === c.id ? (
+                        <>
+                          <button className="btn-primary" onClick={saveEditCard}>Save</button>
+                          <button className="btn-ghost" onClick={() => setEditingId(null)}>Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <button className="btn-ghost" onClick={() => startEditCard(c.id, c.front, c.back)}>Edit</button>
+                          <button className="btn bg-red-700 hover:bg-red-600 text-white" onClick={() => deleteCard(c.id)}>Delete</button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {cards.length === 0 && <div className="text-sm text-gray-400">No cards yet.</div>}
