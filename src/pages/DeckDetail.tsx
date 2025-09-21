@@ -1,16 +1,16 @@
-import { useMemo, useState, FormEvent } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState, FormEvent } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { useAppStore } from '../store/useAppStore'
 import { useI18n } from '../app/I18nProvider'
 
 export default function DeckDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
-  const { getDeck, getVocabsByDeck, updateDeck, updateVocab, deleteVocab } = useAppStore()
+  const updateDeck = useAppStore(s => s.updateDeck)
+  const updateVocab = useAppStore(s => s.updateVocab)
+  const deleteVocab = useAppStore(s => s.deleteVocab)
+  const deck = useAppStore(s => (id ? s.decks[id] : undefined))
+  const vocabs = useAppStore(s => (id ? Object.values(s.vocabs).filter(v => v.deckId === id) : []))
   const { t } = useI18n()
-
-  const deck = id ? getDeck(id) : undefined
-  const vocabs = useMemo(() => (id ? getVocabsByDeck(id) : []), [id, getVocabsByDeck])
 
   const [name, setName] = useState(deck?.name ?? '')
   const [desc, setDesc] = useState(deck?.description ?? '')
@@ -52,53 +52,57 @@ export default function DeckDetail() {
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Deck</h1>
-        <Link className="underline" to="/decks">{t('decks.manage.back')}</Link>
+        <Link className="btn-ghost" to="/decks">{t('decks.manage.back')}</Link>
       </div>
 
-      <form onSubmit={saveMeta} className="space-y-3 max-w-xl">
-        <div>
-          <label className="block text-sm mb-1">Name</label>
-          <input className="w-full border rounded px-3 py-2" value={name} onChange={e => setName(e.target.value)} />
+      <form onSubmit={saveMeta} className="glass p-4 space-y-3 max-w-xl">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm mb-1">Name</label>
+            <input value={name} onChange={e => setName(e.target.value)} placeholder="Deck name" />
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Description</label>
+            <input value={desc} onChange={e => setDesc(e.target.value)} placeholder="optional" />
+          </div>
         </div>
-        <div>
-          <label className="block text-sm mb-1">Description</label>
-          <input className="w-full border rounded px-3 py-2" value={desc} onChange={e => setDesc(e.target.value)} />
-        </div>
-        <button className="px-4 py-2 rounded bg-blue-600 text-white">{t('decks.save')}</button>
+        <button className="btn-primary">{t('decks.save')}</button>
       </form>
 
-      <div>
-        <h2 className="text-lg font-semibold mb-2">Cards</h2>
-        <div className="divide-y border rounded">
-          {vocabs.map(v => (
-            <div key={v.id} className="p-3 flex items-center gap-2 justify-between">
-              {editing === v.id ? (
-                <div className="flex-1 flex gap-2">
-                  <input className="border rounded px-2 py-1 flex-1" value={front} onChange={e => setFront(e.target.value)} />
-                  <input className="border rounded px-2 py-1 flex-1" value={back} onChange={e => setBack(e.target.value)} />
-                </div>
-              ) : (
-                <div className="flex-1">
-                  <div className="font-medium">{v.front}</div>
-                  <div className="text-sm text-gray-500">{v.back}</div>
-                </div>
-              )}
-              <div className="flex gap-2">
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">Cards</h2>
+        <div className="glass p-2">
+          <div className="divide-y divide-white/10">
+            {vocabs.map(v => (
+              <div key={v.id} className="p-3 flex items-center gap-4 justify-between">
                 {editing === v.id ? (
-                  <>
-                    <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={saveVocab}>{t('cards.save')}</button>
-                    <button className="px-3 py-1 rounded bg-gray-300" onClick={() => setEditing(null)}>{t('cards.cancel')}</button>
-                  </>
+                  <div className="flex-1 grid gap-2 sm:grid-cols-2">
+                    <input value={front} onChange={e => setFront(e.target.value)} placeholder="Front" />
+                    <input value={back} onChange={e => setBack(e.target.value)} placeholder="Back" />
+                  </div>
                 ) : (
-                  <>
-                    <button className="px-3 py-1 rounded bg-gray-200" onClick={() => startEdit(v.id, v.front, v.back)}>{t('cards.edit')}</button>
-                    <button className="px-3 py-1 rounded bg-red-600 text-white" onClick={() => deleteVocab(v.id)}>{t('cards.delete')}</button>
-                  </>
+                  <div className="flex-1">
+                    <div className="font-medium">{v.front}</div>
+                    <div className="text-sm text-gray-400">{v.back}</div>
+                  </div>
                 )}
+                <div className="flex gap-2">
+                  {editing === v.id ? (
+                    <>
+                      <button className="btn-primary" onClick={saveVocab}>{t('cards.save')}</button>
+                      <button className="btn-ghost" onClick={() => setEditing(null)}>{t('cards.cancel')}</button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-ghost" onClick={() => startEdit(v.id, v.front, v.back)}>{t('cards.edit')}</button>
+                      <button className="btn bg-red-700 hover:bg-red-600 text-white" onClick={() => deleteVocab(v.id)}>{t('cards.delete')}</button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-          {vocabs.length === 0 && <div className="p-3 text-sm text-gray-500">{t('cards.none')}</div>}
+            ))}
+            {vocabs.length === 0 && <div className="p-3 text-sm text-gray-400">{t('cards.none')}</div>}
+          </div>
         </div>
       </div>
     </section>
