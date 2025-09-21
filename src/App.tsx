@@ -5,6 +5,7 @@ import Decks from './pages/Decks'
 import DeckDetail from './pages/DeckDetail'
 import AddVocab from './pages/AddVocab'
 import Settings from './pages/Settings'
+import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Navbar from './components/Navbar'
 import BackgroundFX from './components/BackgroundFX'
@@ -21,7 +22,8 @@ function App() {
           <Route path="/decks" element={<Decks />} />
           <Route path="/decks/:id" element={<DeckDetail />} />
           <Route path="/add" element={<AddVocab />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

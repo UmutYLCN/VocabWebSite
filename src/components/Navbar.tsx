@@ -12,13 +12,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-20">
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 glass mt-3">
         <div className="flex items-center gap-6">
-          <span className="text-lg font-bold tracking-tight text-red-400">{t('app.title')}</span>
+          <NavLink to="/" className="text-lg font-bold tracking-tight text-red-400">
+            {t('app.title')}
+          </NavLink>
           <ul className="hidden sm:flex items-center gap-2">
-            <li>
-              <NavLink to="/" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-                {t('nav.home')}
-              </NavLink>
-            </li>
             <li>
               <NavLink to="/review" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
                 {t('nav.review')}
@@ -30,8 +27,8 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/settings" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-                {t('nav.settings')}
+              <NavLink to="/profile" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
+                {t('nav.profile')}
               </NavLink>
             </li>
           </ul>
@@ -50,11 +47,6 @@ export default function Navbar() {
       <div className="sm:hidden">
         <ul className="container mx-auto px-4 py-2 flex items-center justify-between text-sm glass">
           <li>
-            <NavLink to="/" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-              {t('nav.home')}
-            </NavLink>
-          </li>
-          <li>
             <NavLink to="/review" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
               {t('nav.review')}
             </NavLink>
@@ -65,8 +57,8 @@ export default function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/settings" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
-              {t('nav.settings')}
+            <NavLink to="/profile" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>
+              {t('nav.profile')}
             </NavLink>
           </li>
         </ul>

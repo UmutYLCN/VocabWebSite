@@ -18,10 +18,10 @@ describe('App skeleton', () => {
         </StoreProvider>
       </ThemeProvider>
     )
-    expect(screen.getAllByText(/Home/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Vocab/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Review/i)[0]).toBeInTheDocument()
     expect(screen.getAllByText(/Cards/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Settings|Ayarlar/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Profile|Profil/i)[0]).toBeInTheDocument()
   })
 
   it('supports Turkish translations', () => {
@@ -37,7 +37,7 @@ describe('App skeleton', () => {
         </StoreProvider>
       </ThemeProvider>
     )
-    expect(screen.getAllByText(/Ana Sayfa/i)[0]).toBeInTheDocument()
-    expect(screen.getAllByText(/Ayarlar/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Vocab/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/Profil/i)[0]).toBeInTheDocument()
   })
 })
