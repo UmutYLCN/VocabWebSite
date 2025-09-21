@@ -4,7 +4,7 @@ export interface Vocab {
   id: string
   front: string
   back: string
-  deckId?: string | null
+  deckId: string
   createdAt: string // ISO date
   review: ReviewState
 }
