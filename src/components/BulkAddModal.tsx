@@ -30,20 +30,17 @@ export default function BulkAddModal({
   const [showErrors, setShowErrors] = useState<boolean>(true)
 
   useEffect(() => {
-    if (isOpen) {
-      setDeckId(defaultDeckId || (decks[0]?.id ?? ''))
-      setText('')
-      setPreview([])
-      setErrors([])
-      fileRef.current && (fileRef.current.value = '')
-      jsonFileRef.current && (jsonFileRef.current.value = '')
-      setJsonText('')
-      setStatus('')
-      setActiveTab('cards')
-    }
+    if (!isOpen) return
+    setDeckId(defaultDeckId || (decks[0]?.id ?? ''))
+    setText('')
+    setPreview([])
+    setErrors([])
+    fileRef.current && (fileRef.current.value = '')
+    jsonFileRef.current && (jsonFileRef.current.value = '')
+    setJsonText('')
+    setStatus('')
+    setActiveTab('cards')
   }, [isOpen, defaultDeckId, decks])
-
-  if (!isOpen) return null
 
   const parseCSVLine = (line: string): string[] => {
     const out: string[] = []
@@ -109,11 +106,13 @@ export default function BulkAddModal({
 
   // Auto-parse on text changes for streamlined UX
   useEffect(() => {
-    if (activeTab !== 'cards') return
+    if (!isOpen || activeTab !== 'cards') return
     const { ok, errs } = detectAndSplit(text)
     setPreview(ok)
     setErrors(errs)
   }, [text, activeTab])
+
+  if (!isOpen) return null
 
   const doImport = () => {
     if (!deckId || preview.length === 0) return
